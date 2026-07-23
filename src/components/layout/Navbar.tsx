@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Bell, Sun, Moon, Plus, Sparkles, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Search, Bell, Sun, Moon, Plus, Sparkles, MapPin, CheckCircle2, AlertCircle, Shield, Lock, Unlock } from 'lucide-react';
 
 interface NavbarProps {
   darkMode: boolean;
@@ -10,6 +10,8 @@ interface NavbarProps {
   onOpenQRScanner: () => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  userRole: 'Owner' | 'Karyawan';
+  onToggleRole: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,6 +23,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenQRScanner,
   searchQuery,
   setSearchQuery,
+  userRole,
+  onToggleRole,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -41,7 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             placeholder="Cari order, no invoice, pelanggan, atau sepatu..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 dark:bg-slate-800/70 text-slate-900 dark:text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all border border-transparent dark:border-slate-700/50 placeholder-slate-400"
+            className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-slate-100 dark:bg-slate-800/70 text-slate-900 dark:text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all border border-transparent dark:border-slate-700/50 placeholder-slate-400"
           />
         </div>
 
@@ -62,6 +66,29 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Right Controls */}
       <div className="flex items-center gap-2 md:gap-3">
+        {/* Role Mode Switcher Badge */}
+        <button
+          onClick={onToggleRole}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all border shadow-sm ${
+            userRole === 'Owner'
+              ? 'bg-purple-600 text-white border-purple-500 shadow-purple-600/20'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-200'
+          }`}
+          title={userRole === 'Owner' ? 'Klik untuk Mengunci ke Mode Karyawan' : 'Klik untuk Membuka Mode Owner (Perlu Sandi)'}
+        >
+          {userRole === 'Owner' ? (
+            <>
+              <Unlock className="w-3.5 h-3.5 text-amber-300" />
+              <span>Mode Owner</span>
+            </>
+          ) : (
+            <>
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <span>Mode Karyawan</span>
+            </>
+          )}
+        </button>
+
         {/* QR Scanner Trigger */}
         <button
           onClick={onOpenQRScanner}
@@ -91,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {darkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
         </button>
 
-        {/* Notification Bell with Dropdown */}
+        {/* Notification Bell */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}

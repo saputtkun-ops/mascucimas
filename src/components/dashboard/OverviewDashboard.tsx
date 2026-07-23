@@ -16,9 +16,10 @@ import {
   Printer,
   Sparkles,
   ArrowUpRight,
+  Lock,
 } from 'lucide-react';
 import { Order, Customer, FinancialRecord } from '../../types';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface OverviewDashboardProps {
   orders: Order[];
@@ -28,6 +29,8 @@ interface OverviewDashboardProps {
   onOpenQRScanner: () => void;
   onNavigateTab: (tab: string) => void;
   onSelectOrder: (order: Order) => void;
+  userRole: 'Owner' | 'Karyawan';
+  onPromptOwnerAuth: (targetTab?: string) => void;
 }
 
 export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
@@ -38,7 +41,11 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   onOpenQRScanner,
   onNavigateTab,
   onSelectOrder,
+  userRole,
+  onPromptOwnerAuth,
 }) => {
+  const isOwner = userRole === 'Owner';
+
   // Metrics calculation
   const totalOrdersToday = orders.length;
   const ordersProcessing = orders.filter((o) => o.status !== 'Selesai' && o.status !== 'Siap Diantar').length;
@@ -79,13 +86,14 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold mb-3">
-              <Sparkles className="w-3.5 h-3.5" /> Operasional Real-time Aktif
+              <Sparkles className="w-3.5 h-3.5" />
+              {isOwner ? '👑 Akses Penuh Mode Owner' : '👤 Akses Operasional Mode Karyawan'}
             </div>
             <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-              Selamat Datang Kembali, Owner! 👋
+              Selamat Datang, {isOwner ? 'Owner Mas Cuci Mas! 👋' : 'Tim Kasir & Teknisi! 👋'}
             </h2>
             <p className="text-sm text-slate-300 mt-1 max-w-xl">
-              Performa bisnis Mas Cuci Mas hari ini sangat baik. Ada{' '}
+              Performa bisnis Mas Cuci Mas hari ini berjalan lancar. Ada{' '}
               <span className="font-bold text-amber-300">{ordersProcessing} sepatu</span> sedang diproses dalam jalur laundry digital.
             </p>
           </div>
@@ -160,7 +168,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         </button>
       </div>
 
-      {/* KPI Cards Grid (10 Required Widgets) */}
+      {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-sm">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
@@ -202,42 +210,79 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           <span className="text-[11px] text-slate-400 mt-1 block">Kurir Aktif</span>
         </div>
 
+        {/* Omset Hari Ini (Lock in Karyawan Mode) */}
         <div className="bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-sm col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
             <span className="text-xs font-semibold">Omset Hari Ini</span>
             <DollarSign className="w-4 h-4 text-emerald-500" />
           </div>
-          <p className="text-xl font-black text-slate-900 dark:text-white">{formatRupiah(totalIncomeToday)}</p>
-          <span className="text-[11px] text-emerald-500 font-semibold flex items-center gap-1 mt-1">
-            <TrendingUp className="w-3 h-3" /> Realtime Paid
-          </span>
+          {isOwner ? (
+            <>
+              <p className="text-xl font-black text-slate-900 dark:text-white">{formatRupiah(totalIncomeToday)}</p>
+              <span className="text-[11px] text-emerald-500 font-semibold flex items-center gap-1 mt-1">
+                <TrendingUp className="w-3 h-3" /> Realtime Paid
+              </span>
+            </>
+          ) : (
+            <button
+              onClick={() => onPromptOwnerAuth('finance')}
+              className="text-left group cursor-pointer w-full"
+            >
+              <p className="text-sm font-bold text-amber-500 flex items-center gap-1">
+                <Lock className="w-4 h-4" /> Rahasia Owner
+              </p>
+              <span className="text-[10px] text-slate-400 group-hover:underline">Klik untuk Buka PIN</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Financial Summary Row */}
+      {/* Financial Summary Row (Locked for Karyawan mode) */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-md">
-          <span className="text-xs text-blue-200 font-medium">Pendapatan Bulanan</span>
-          <p className="text-2xl font-black mt-1">{formatRupiah(monthlyIncome)}</p>
-          <span className="text-xs text-blue-200 mt-2 block">+14.2% dibanding bulan lalu</span>
-        </div>
+        {isOwner ? (
+          <>
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 rounded-2xl shadow-md">
+              <span className="text-xs text-blue-200 font-medium">Pendapatan Bulanan</span>
+              <p className="text-2xl font-black mt-1">{formatRupiah(monthlyIncome)}</p>
+              <span className="text-xs text-blue-200 mt-2 block">+14.2% dibanding bulan lalu</span>
+            </div>
 
-        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm">
-          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
-            <span className="text-xs font-semibold">Pengeluaran Bulanan</span>
-            <TrendingDown className="w-4 h-4 text-red-500" />
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm">
+              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-semibold">Pengeluaran Bulanan</span>
+                <TrendingDown className="w-4 h-4 text-red-500" />
+              </div>
+              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{formatRupiah(monthlyExpense)}</p>
+              <span className="text-[11px] text-slate-400 mt-2 block">Bahan & Komisi Operasional</span>
+            </div>
+
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-5 rounded-2xl shadow-sm">
+              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">Laba Bersih Estimasi</span>
+              <p className="text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1">{formatRupiah(netProfit)}</p>
+              <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-2 block">
+                Margin Bersih ~67.6%
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className="sm:col-span-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-5 rounded-2xl border border-slate-700 text-white flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                <Lock className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm">Data Keuangan & Omset Terkunci</h4>
+                <p className="text-xs text-slate-400">Anda saat ini berada pada Mode Karyawan. Fitur Keuangan khusus Owner.</p>
+              </div>
+            </div>
+            <button
+              onClick={() => onPromptOwnerAuth('finance')}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 font-bold text-xs rounded-xl shadow-md transition-all shrink-0"
+            >
+              Buka PIN Owner
+            </button>
           </div>
-          <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{formatRupiah(monthlyExpense)}</p>
-          <span className="text-[11px] text-slate-400 mt-2 block">Bahan & Komisi Operasional</span>
-        </div>
-
-        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-5 rounded-2xl shadow-sm">
-          <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">Laba Bersih Estimasi</span>
-          <p className="text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1">{formatRupiah(netProfit)}</p>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-2 block">
-            Margin Bersih ~67.6%
-          </span>
-        </div>
+        )}
 
         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
@@ -258,11 +303,11 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
 
       {/* Interactive Charts & Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Revenue & Order Volume Chart */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 p-5 rounded-3xl shadow-sm">
+        {/* Left 2 Cols: Revenue Chart */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 p-5 rounded-3xl shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Grafik Pendapatan & Order Mingguan</h3>
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Grafik Pendapatan & Transaksi</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">Tren transaksi 7 hari terakhir di Cabang Utama</p>
             </div>
             <span className="text-xs px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl">
@@ -280,9 +325,9 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="day" stroke="#94a3b8" fontSize={12} tickLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v / 1000}k`} tickLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => isOwner ? `${v / 1000}k` : '***'} tickLine={false} />
                 <Tooltip
-                  formatter={(value: any) => [formatRupiah(value), 'Pendapatan']}
+                  formatter={(value: any) => [isOwner ? formatRupiah(value) : '*** (Mode Karyawan)', 'Pendapatan']}
                   contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff' }}
                 />
                 <Area type="monotone" dataKey="Pendapatan" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
@@ -291,7 +336,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           </div>
         </div>
 
-        {/* Right Col: Recent Orders List */}
+        {/* Right Col: Recent Orders */}
         <div className="bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 p-5 rounded-3xl shadow-sm flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Order Terbaru</h3>

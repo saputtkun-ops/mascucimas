@@ -18,6 +18,7 @@ import { SettingsPage } from './components/settings/SettingsPage';
 
 import { ThermalReceiptModal } from './components/common/ThermalReceiptModal';
 import { QRScannerModal } from './components/common/QRScannerModal';
+import { OwnerAuthModal } from './components/common/OwnerAuthModal';
 
 import {
   INITIAL_ORDERS,
@@ -34,6 +35,12 @@ export function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
+
+  // Role Access State: 'Karyawan' (default) or 'Owner'
+  const [userRole, setUserRole] = useState<'Owner' | 'Karyawan'>('Karyawan');
+  const [ownerPin, setOwnerPin] = useState<string>('1234');
+  const [isOwnerAuthOpen, setIsOwnerAuthOpen] = useState<boolean>(false);
+  const [pendingTargetTab, setPendingTargetTab] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
@@ -58,6 +65,38 @@ export function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Tab switching with role security check
+  const handleTabChange = (tab: string) => {
+    const ownerOnlyTabs = ['finance', 'employees', 'settings'];
+    if (ownerOnlyTabs.includes(tab) && userRole !== 'Owner') {
+      setPendingTargetTab(tab);
+      setIsOwnerAuthOpen(true);
+      return;
+    }
+    setActiveTab(tab);
+  };
+
+  const handleToggleRoleButton = () => {
+    if (userRole === 'Owner') {
+      setUserRole('Karyawan');
+      if (['finance', 'employees', 'settings'].includes(activeTab)) {
+        setActiveTab('dashboard');
+      }
+    } else {
+      setPendingTargetTab(null);
+      setIsOwnerAuthOpen(true);
+    }
+  };
+
+  const handleAuthSuccess = () => {
+    setUserRole('Owner');
+    setIsOwnerAuthOpen(false);
+    if (pendingTargetTab) {
+      setActiveTab(pendingTargetTab);
+      setPendingTargetTab(null);
+    }
+  };
 
   // Handlers
   const handleSaveNewOrder = (newOrder: Order) => {
@@ -135,10 +174,11 @@ export function App() {
       {/* Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
         pendingCount={pendingCount}
+        userRole={userRole}
       />
 
       {/* Main Content Area */}
@@ -152,6 +192,8 @@ export function App() {
           onOpenQRScanner={() => setIsQRScannerOpen(true)}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          userRole={userRole}
+          onToggleRole={handleToggleRoleButton}
         />
 
         {/* Dynamic Tab Views */}
@@ -163,8 +205,13 @@ export function App() {
               financials={INITIAL_FINANCIALS}
               onOpenNewOrder={() => setIsNewOrderOpen(true)}
               onOpenQRScanner={() => setIsQRScannerOpen(true)}
-              onNavigateTab={setActiveTab}
+              onNavigateTab={handleTabChange}
               onSelectOrder={setSelectedOrderDetail}
+              userRole={userRole}
+              onPromptOwnerAuth={(targetTab) => {
+                setPendingTargetTab(targetTab || null);
+                setIsOwnerAuthOpen(true);
+              }}
             />
           )}
 
@@ -193,21 +240,26 @@ export function App() {
             <InventoryManager inventory={INITIAL_INVENTORY} suppliers={INITIAL_SUPPLIERS} />
           )}
 
-          {activeTab === 'finance' && <FinancialOverview financials={INITIAL_FINANCIALS} />}
-
-          {activeTab === 'employees' && <EmployeeManager employees={INITIAL_EMPLOYEES} />}
-
           {activeTab === 'qc' && (
             <QualityControl orders={orders} onApproveQC={handleApproveQC} />
           )}
 
-          {activeTab === 'settings' && <SettingsPage />}
+          {/* Owner Only Tabs */}
+          {activeTab === 'finance' && userRole === 'Owner' && (
+            <FinancialOverview financials={INITIAL_FINANCIALS} />
+          )}
+
+          {activeTab === 'employees' && userRole === 'Owner' && (
+            <EmployeeManager employees={INITIAL_EMPLOYEES} />
+          )}
+
+          {activeTab === 'settings' && userRole === 'Owner' && <SettingsPage />}
         </main>
 
         {/* Mobile Navigation */}
         <MobileNav
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleTabChange}
           pendingCount={pendingCount}
           onOpenNewOrder={() => setIsNewOrderOpen(true)}
         />
@@ -240,6 +292,16 @@ export function App() {
         onClose={() => setIsQRScannerOpen(false)}
         orders={orders}
         onSelectOrder={setSelectedOrderDetail}
+      />
+
+      <OwnerAuthModal
+        isOpen={isOwnerAuthOpen}
+        onClose={() => {
+          setIsOwnerAuthOpen(false);
+          setPendingTargetTab(null);
+        }}
+        onSuccess={handleAuthSuccess}
+        correctPin={ownerPin}
       />
     </div>
   );
