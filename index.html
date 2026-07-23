@@ -18,28 +18,17 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
   </head>
   <body style="margin: 0; background-color: #0f172a; color: #ffffff;">
-    <div id="root">
-      {/* Initial Loading Screen to Prevent Blank Page */}
-      <div style="min-height: 100vh; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 20px;">
-        <div style="width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(135deg, #2563eb, #4f46e5); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; color: #ffffff; box-shadow: 0 10px 25px rgba(37,99,235,0.4); margin-bottom: 16px;">M</div>
-        <h2 style="font-size: 18px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;">MAS CUCI MAS</h2>
-        <p style="font-size: 12px; color: #94a3b8; margin: 0;">Memuat Aplikasi Shoe Care OS...</p>
-      </div>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Clear Stale SW & Register Fresh Service Worker -->
+    <!-- Clear Stale Service Workers & Register Fresh SW -->
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.getRegistrations().then(registrations => {
-            for (let registration of registrations) {
-              registration.unregister();
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (var i = 0; i < registrations.length; i++) {
+              registrations[i].unregister();
             }
-          }).then(() => {
-            navigator.serviceWorker.register('/sw.js').catch(err => {
-              console.log('SW Registration:', err);
-            });
           });
         });
       }
