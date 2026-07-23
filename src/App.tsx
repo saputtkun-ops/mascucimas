@@ -205,7 +205,12 @@ export function App() {
         </main>
 
         {/* Mobile Navigation */}
-        <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} pendingCount={pendingCount} />
+        <MobileNav
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          pendingCount={pendingCount}
+          onOpenNewOrder={() => setIsNewOrderOpen(true)}
+        />
       </div>
 
       {/* Global Modals */}
