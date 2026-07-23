@@ -1,0 +1,594 @@
+
+PROMPT
+
+Buatkan aplikasi web responsif (desktop dan mobile) bernama Mas Cuci Mas dengan desain premium, modern, minimalis, dan profesional. Gunakan UI/UX setara aplikasi SaaS modern seperti Notion, Linear, Stripe Dashboard, dan Apple Human Interface Guidelines.
+
+Tujuan Aplikasi
+
+Aplikasi ini digunakan untuk mengelola seluruh operasional bisnis jasa cuci sepatu, mulai dari pelanggan datang hingga sepatu selesai diantar kembali. Fokus utama aplikasi adalah efisiensi operasional, monitoring pekerjaan secara real-time, laporan keuangan, dan pengalaman pengguna yang sederhana namun elegan.
+
+---
+
+Tema Desain
+
+Gunakan desain modern dengan karakteristik:
+
+- Minimalis
+- Clean layout
+- Banyak white space
+- Rounded corner
+- Soft shadow
+- Ikon modern
+- Animasi halus
+- Dark Mode & Light Mode
+- Responsive
+- Mobile First
+
+Warna utama:
+
+- Hitam
+- Putih
+- Abu-abu
+- Biru sebagai accent color
+
+Font:
+
+- Inter
+- SF Pro Display
+
+---
+
+Dashboard
+
+Halaman pertama menampilkan ringkasan bisnis.
+
+Widget:
+
+- Total Order Hari Ini
+- Order Diproses
+- Order Selesai
+- Order Diantar
+- Total Pendapatan Hari Ini
+- Pendapatan Bulanan
+- Pengeluaran Bulanan
+- Laba Bersih
+- Jumlah Pelanggan
+- Rating Pelanggan
+- Grafik Pendapatan
+- Grafik Order
+
+Quick Action:
+
+- Tambah Order
+- Scan QR
+- Cari Pelanggan
+- Jadwalkan Pickup
+- Cetak Invoice
+
+---
+
+Modul Pelanggan
+
+Data pelanggan meliputi:
+
+- Nama
+- Nomor HP
+- WhatsApp
+- Email
+- Alamat
+- Titik Google Maps
+- Catatan
+- Total Order
+- Total Pengeluaran
+- Tanggal Bergabung
+- Status Member
+- Riwayat Order
+
+Fitur:
+
+- Cari pelanggan
+- Filter
+- Edit
+- Hapus
+- Export Excel
+- Import Excel
+
+---
+
+Modul Order
+
+Setiap order memiliki:
+
+Nomor Invoice otomatis
+
+Tanggal Masuk
+
+Deadline
+
+Status
+
+Jenis Layanan
+
+Estimasi Selesai
+
+Metode Pembayaran
+
+Kurir
+
+Cabang
+
+---
+
+Data Sepatu
+
+Merek
+
+Model
+
+Ukuran
+
+Warna
+
+Material
+
+Nomor Seri
+
+Foto Before
+
+Foto After
+
+Video
+
+Catatan Kerusakan
+
+Checklist Kerusakan
+
+Checklist Kelengkapan
+
+---
+
+Status Progress
+
+Menunggu
+
+Antrian
+
+Sedang Dicuci
+
+Deep Cleaning
+
+Drying
+
+Finishing
+
+QC
+
+Packing
+
+Siap Diantar
+
+Selesai
+
+Progress ditampilkan menggunakan timeline dan progress bar.
+
+---
+
+SOP Digital
+
+Setiap order memiliki checklist SOP.
+
+Contoh:
+
+□ Foto Before
+
+□ Lepas tali
+
+□ Bersihkan outsole
+
+□ Bersihkan midsole
+
+□ Bersihkan upper
+
+□ Deep Cleaning
+
+□ Drying
+
+□ Pewangi
+
+□ QC
+
+□ Foto After
+
+□ Packing
+
+□ Siap Diantar
+
+Checklist dapat dicentang oleh admin.
+
+---
+
+Galeri Before After
+
+Semua hasil pencucian otomatis tersimpan.
+
+Fitur:
+
+Gallery
+
+Filter
+
+Search
+
+Download
+
+Share
+
+Instagram Ready
+
+TikTok Ready
+
+---
+
+Jadwal Pickup Delivery
+
+Kalender
+
+Google Maps
+
+Lokasi pelanggan
+
+Estimasi perjalanan
+
+Status Kurir
+
+Tracking
+
+Rute
+
+Driver Assignment
+
+---
+
+Manajemen Inventaris
+
+Kategori:
+
+Sabun
+
+Sikat
+
+Lap
+
+Sprayer
+
+Parfum
+
+Packaging
+
+Sticker
+
+Tag
+
+Rak
+
+Mesin
+
+Data:
+
+Nama Barang
+
+Kategori
+
+Supplier
+
+Harga
+
+Stok
+
+Minimum Stok
+
+Lokasi Penyimpanan
+
+Riwayat Pemakaian
+
+Notifikasi stok menipis.
+
+---
+
+Supplier
+
+Nama
+
+Kontak
+
+Alamat
+
+Produk
+
+Riwayat Pembelian
+
+Jatuh Tempo
+
+---
+
+Keuangan
+
+Dashboard:
+
+Pendapatan
+
+Pengeluaran
+
+Laba
+
+Cash Flow
+
+Grafik Bulanan
+
+Kategori Pengeluaran
+
+Laporan Harian
+
+Laporan Mingguan
+
+Laporan Bulanan
+
+Laporan Tahunan
+
+Export:
+
+PDF
+
+Excel
+
+CSV
+
+---
+
+Membership
+
+Bronze
+
+Silver
+
+Gold
+
+Platinum
+
+Point Otomatis
+
+Voucher
+
+Diskon
+
+Cashback
+
+Riwayat Point
+
+---
+
+Promo
+
+Kode Voucher
+
+Diskon
+
+Referral
+
+Promo Event
+
+Flash Sale
+
+---
+
+Notifikasi
+
+WhatsApp
+
+Email
+
+Push Notification
+
+Status order berubah otomatis mengirim notifikasi kepada pelanggan.
+
+---
+
+Review
+
+Bintang
+
+Komentar
+
+Foto
+
+Balasan Admin
+
+Statistik Kepuasan
+
+---
+
+Karyawan
+
+Data Karyawan
+
+Absensi
+
+Jadwal
+
+Target Harian
+
+Performa
+
+Komisi
+
+Bonus
+
+Hak Akses
+
+Role:
+
+Owner
+
+Manager
+
+Admin
+
+Kurir
+
+Teknisi
+
+Kasir
+
+---
+
+Quality Control
+
+Checklist lengkap.
+
+Foto hasil QC.
+
+Approval Manager.
+
+Riwayat QC.
+
+---
+
+Laporan
+
+Pendapatan
+
+Order
+
+Pelanggan
+
+Inventaris
+
+Kurir
+
+Karyawan
+
+Layanan Terlaris
+
+Material Sepatu Terbanyak
+
+Repeat Customer
+
+Profit
+
+Semua dapat difilter berdasarkan tanggal.
+
+---
+
+Pengaturan
+
+Logo
+
+Nama Toko
+
+Alamat
+
+WhatsApp
+
+Jam Operasional
+
+Harga Layanan
+
+Jenis Layanan
+
+Cabang
+
+Printer
+
+Pajak
+
+Backup Database
+
+Restore Database
+
+---
+
+Integrasi
+
+WhatsApp API
+
+Google Maps
+
+QR Code
+
+Barcode
+
+Cloud Storage
+
+Camera Upload
+
+Printer Thermal
+
+Google Drive Backup
+
+---
+
+Keamanan
+
+Login
+
+OTP
+
+Reset Password
+
+2FA
+
+Session Management
+
+Role Permission
+
+Audit Log
+
+Backup Otomatis
+
+Enkripsi Data
+
+---
+
+Teknologi
+
+Frontend:
+React + Next.js + TypeScript + Tailwind CSS.
+
+Backend:
+Supabase/Firebase.
+
+Database:
+PostgreSQL.
+
+Authentication:
+Supabase Auth/Firebase Auth.
+
+Storage:
+Cloud Storage.
+
+Realtime Database.
+
+PWA (Progressive Web App) agar dapat diinstal seperti aplikasi Android dan iPhone.
+
+---
+
+UI/UX
+
+Gunakan desain profesional dengan:
+
+- Dashboard interaktif.
+- Sidebar modern yang dapat diciutkan.
+- Header dengan pencarian global.
+- Card statistik.
+- Data table modern.
+- Drag-and-drop upload foto.
+- Progress bar animasi.
+- Kalender.
+- Chart interaktif.
+- Toast notification.
+- Skeleton loading.
+- Empty state.
+- Micro interaction.
+- Responsif untuk desktop, tablet, dan ponsel.
+
+Pastikan seluruh desain terasa premium, mudah digunakan, cepat dipelajari, dan siap dikembangkan menjadi sistem manajemen jasa cuci sepatu berskala nasional dengan dukungan multi-cabang dan ribuan transaksi.
