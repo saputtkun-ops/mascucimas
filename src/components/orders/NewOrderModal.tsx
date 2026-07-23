@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { X, Camera, Check, Sparkles, User, ShoppingBag, ShieldAlert, CreditCard } from 'lucide-react';
-import { Order, ServiceType, PaymentMethod, ShoeMaterial, OrderStatus } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { X, Camera, Check, Sparkles, User, ShoppingBag, CreditCard, Edit3 } from 'lucide-react';
+import { Order, ServiceType, PaymentMethod } from '../../types';
 
 interface NewOrderModalProps {
   isOpen: boolean;
@@ -26,26 +26,38 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
   const [material, setMaterial] = useState<string>('Leather');
   const [damageNotes, setDamageNotes] = useState('Scuffs di midsole, noda oli rantai');
 
-  const [serviceType, setServiceType] = useState<ServiceType>('Deep Clean');
+  const [serviceType, setServiceType] = useState<string>('Deep Clean');
+  const [customServiceName, setCustomServiceName] = useState('');
+  const [customPrice, setCustomPrice] = useState<number>(75000);
+  const [isCustomPriceMode, setIsCustomPriceMode] = useState<boolean>(true);
+
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('QRIS');
   const [paymentStatus, setPaymentStatus] = useState<'Lunas' | 'DP'>('Lunas');
 
   const [damageChecklist, setDamageChecklist] = useState<string[]>(['Midsole Yellowing', 'Noda Membandel']);
   const [completenessChecklist, setCompletenessChecklist] = useState<string[]>(['Insole Original', 'Tali Bawaan']);
 
-  if (!isOpen) return null;
+  // Preset prices mapping
+  const presetPrices: Record<string, number> = {
+    'Fast Clean': 50000,
+    'Deep Clean': 75000,
+    'Express 24 Hours': 120000,
+    'Unyellowing': 150000,
+    'Repaint & Recolor': 250000,
+    'Leather Special Care': 180000,
+  };
 
-  const getServicePrice = (type: ServiceType) => {
-    switch (type) {
-      case 'Fast Clean': return 50000;
-      case 'Deep Clean': return 75000;
-      case 'Express 24 Hours': return 120000;
-      case 'Unyellowing': return 150000;
-      case 'Repaint & Recolor': return 250000;
-      case 'Leather Special Care': return 180000;
-      default: return 75000;
+  const handleServiceTypeChange = (selected: string) => {
+    setServiceType(selected);
+    if (selected === 'Custom') {
+      setIsCustomPriceMode(true);
+      if (!customPrice) setCustomPrice(100000);
+    } else {
+      setCustomPrice(presetPrices[selected] || 75000);
     }
   };
+
+  if (!isOpen) return null;
 
   const handleToggleDamage = (item: string) => {
     if (damageChecklist.includes(item)) {
@@ -67,7 +79,8 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
     e.preventDefault();
     if (!customerName || !customerPhone || !model) return;
 
-    const totalAmount = getServicePrice(serviceType);
+    const finalServiceType = (serviceType === 'Custom' ? (customServiceName || 'Custom Treatment') : serviceType) as ServiceType;
+    const finalAmount = Number(customPrice) || 0;
     const invoiceNum = `MCM-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(100 + Math.random() * 900)}`;
 
     const newOrd: Order = {
@@ -82,8 +95,8 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
       deadline: new Date(Date.now() + 48 * 3600 * 1000).toISOString().replace('T', ' ').slice(0, 16),
       estimatedFinish: new Date(Date.now() + 36 * 3600 * 1000).toISOString().replace('T', ' ').slice(0, 16),
       status: 'Menunggu',
-      serviceType,
-      totalAmount,
+      serviceType: finalServiceType,
+      totalAmount: finalAmount,
       paymentMethod,
       paymentStatus,
       technicianName: 'Agus Senior Care',
@@ -131,7 +144,7 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             </div>
             <div>
               <h3 className="font-extrabold text-base">Register Order Baru (POS)</h3>
-              <p className="text-[11px] text-blue-300">Input Data Pelanggan, Sepatu & SOP Kasir</p>
+              <p className="text-[11px] text-blue-300">Input Data Pelanggan, Sepatu & Pricing Custom</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-xl transition-colors">
@@ -296,28 +309,69 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Service & Payment */}
+          {/* Section 3: Service & Custom Pricing */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-1.5">
-              <CreditCard className="w-4 h-4" /> 3. Pilih Layanan & Pembayaran
+              <CreditCard className="w-4 h-4" /> 3. Layanan & Input Harga Custom
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-700/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 mb-3">
+              {/* Jenis Layanan Picker */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Jenis Layanan</label>
                 <select
                   value={serviceType}
-                  onChange={(e) => setServiceType(e.target.value as ServiceType)}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl font-bold text-blue-600 dark:text-blue-400"
+                  onChange={(e) => handleServiceTypeChange(e.target.value)}
+                  className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-blue-600 dark:text-blue-400"
                 >
-                  <option value="Fast Clean">Fast Clean (Rp 50.000)</option>
-                  <option value="Deep Clean">Deep Clean (Rp 75.000)</option>
-                  <option value="Express 24 Hours">Express 24 Hours (Rp 120.000)</option>
-                  <option value="Unyellowing">Unyellowing (Rp 150.000)</option>
-                  <option value="Repaint & Recolor">Repaint & Recolor (Rp 250.000)</option>
-                  <option value="Leather Special Care">Leather Special Care (Rp 180.000)</option>
+                  <option value="Fast Clean">Fast Clean (Preset Rp 50.000)</option>
+                  <option value="Deep Clean">Deep Clean (Preset Rp 75.000)</option>
+                  <option value="Express 24 Hours">Express 24 Hours (Preset Rp 120.000)</option>
+                  <option value="Unyellowing">Unyellowing (Preset Rp 150.000)</option>
+                  <option value="Repaint & Recolor">Repaint & Recolor (Preset Rp 250.000)</option>
+                  <option value="Leather Special Care">Leather Special Care (Preset Rp 180.000)</option>
+                  <option value="Custom">✨ Custom Layanan & Custom Harga</option>
                 </select>
+
+                {serviceType === 'Custom' && (
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ketik Nama Layanan Khusus (misal: Deep Clean + Whitening Sole)"
+                    value={customServiceName}
+                    onChange={(e) => setCustomServiceName(e.target.value)}
+                    className="w-full mt-2 px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-600 rounded-xl font-semibold"
+                  />
+                )}
               </div>
 
+              {/* Custom Price Manual Input */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
+                  <span>Harga Layanan (Rp) *</span>
+                  <span className="text-[10px] text-amber-500 font-extrabold flex items-center gap-0.5">
+                    <Edit3 className="w-3 h-3" /> BISA DIEDIT CUSTOM
+                  </span>
+                </label>
+
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-extrabold text-xs text-slate-400">Rp</span>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="1000"
+                    value={customPrice}
+                    onChange={(e) => setCustomPrice(Number(e.target.value))}
+                    placeholder="Masukkan nominal harga..."
+                    className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-white dark:bg-slate-800 border-2 border-blue-500 dark:border-blue-400 rounded-xl font-black text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1">Anda bebas mengubah nominal harga di atas sesuai kesepakatan dengan pelanggan.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Metode Pembayaran</label>
                 <select
@@ -345,11 +399,11 @@ export const NewOrderModal: React.FC<NewOrderModalProps> = ({
             </div>
 
             {/* Total Price Summary */}
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-slate-700/60 rounded-2xl flex items-center justify-between">
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-slate-700/60 rounded-2xl flex items-center justify-between border border-blue-200 dark:border-slate-600">
               <div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Total Tagihan Invoice</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Total Tagihan Invoice (Custom)</span>
                 <p className="text-2xl font-black text-blue-600 dark:text-blue-400">
-                  Rp {getServicePrice(serviceType).toLocaleString('id-ID')}
+                  Rp {(Number(customPrice) || 0).toLocaleString('id-ID')}
                 </p>
               </div>
 
