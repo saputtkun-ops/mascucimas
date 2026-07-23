@@ -33,7 +33,11 @@ import { Order, Customer, OrderStatus } from './types';
 
 export function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    try {
+      return typeof window !== 'undefined' && Boolean(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    } catch {
+      return false;
+    }
   });
 
   // Role Access State: 'Karyawan' (default) or 'Owner'
