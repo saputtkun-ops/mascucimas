@@ -253,7 +253,9 @@ export function App() {
             <EmployeeManager employees={INITIAL_EMPLOYEES} />
           )}
 
-          {activeTab === 'settings' && userRole === 'Owner' && <SettingsPage />}
+          {activeTab === 'settings' && userRole === 'Owner' && (
+            <SettingsPage ownerPin={ownerPin} onUpdateOwnerPin={(newPin) => setOwnerPin(newPin)} />
+          )}
         </main>
 
         {/* Mobile Navigation */}
