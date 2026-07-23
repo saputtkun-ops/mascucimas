@@ -304,6 +304,7 @@ export function App() {
         }}
         onSuccess={handleAuthSuccess}
         correctPin={ownerPin}
+        onUpdateOwnerPin={(newPin) => setOwnerPin(newPin)}
       />
     </div>
   );
