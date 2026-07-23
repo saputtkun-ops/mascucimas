@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               
               {/* Lock badge if owner-only and in Karyawan mode */}
               {!collapsed && isLocked && (
-                <Lock className="w-3.5 h-3.5 ml-auto text-amber-500 shrink-0" title="Memerlukan PIN Owner" />
+                <Lock className="w-3.5 h-3.5 ml-auto text-amber-500 shrink-0" />
               )}
 
               {!collapsed && !isLocked && item.badge ? (
