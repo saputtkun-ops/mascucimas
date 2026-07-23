@@ -9,7 +9,7 @@
     <title>Mas Cuci Mas - Premium Shoe Care OS</title>
     <meta name="description" content="Aplikasi Sistem Operasional POS & Laundry Sepatu Modern Mas Cuci Mas" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#2563eb" />
+    <meta name="theme-color" content="#0f172a" />
     
     <!-- iOS / Safari Mobile PWA Support -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,16 +17,29 @@
     <meta name="apple-mobile-web-app-title" content="MasCuciMas" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
   </head>
-  <body>
-    <div id="root"></div>
+  <body style="margin: 0; background-color: #0f172a; color: #ffffff;">
+    <div id="root">
+      {/* Initial Loading Screen to Prevent Blank Page */}
+      <div style="min-height: 100vh; background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 18px; background: linear-gradient(135deg, #2563eb, #4f46e5); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; color: #ffffff; box-shadow: 0 10px 25px rgba(37,99,235,0.4); margin-bottom: 16px;">M</div>
+        <h2 style="font-size: 18px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;">MAS CUCI MAS</h2>
+        <p style="font-size: 12px; color: #94a3b8; margin: 0;">Memuat Aplikasi Shoe Care OS...</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Register PWA Service Worker -->
+    <!-- Clear Stale SW & Register Fresh Service Worker -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => {
-            console.log('Service Worker registration failed:', err);
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (let registration of registrations) {
+              registration.unregister();
+            }
+          }).then(() => {
+            navigator.serviceWorker.register('/sw.js').catch(err => {
+              console.log('SW Registration:', err);
+            });
           });
         });
       }
