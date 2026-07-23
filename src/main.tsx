@@ -29,7 +29,7 @@ class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: 24, fontFamily: 'system-ui, sans-serif', textAlign: 'center', background: '#0f172a', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justify: 'center' }}>
+        <div style={{ padding: 24, fontFamily: 'system-ui, sans-serif', textAlign: 'center', background: '#0f172a', color: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ width: 48, height: 48, borderRadius: 16, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontWeight: 'bold', fontSize: 20 }}>M</div>
           <h2 style={{ fontSize: 20, fontWeight: 'bold', margin: 0 }}>Mas Cuci Mas App</h2>
           <p style={{ color: '#94a3b8', marginTop: 8, fontSize: 13, maxWidth: 400 }}>
